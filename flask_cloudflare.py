@@ -148,9 +148,10 @@ class APIQuery:
             self.request.data = json.dumps(self.payload)
         prepared = self.session.prepare_request(self.request)
         response = self.session.send(prepared)
-        if response.headers.get('Content-Type') != 'application/json':
+        try:
+            data = response.json()
+        except Exception:
             raise APIError(response)
-        data = response.json()
         if not data.get('success', False):
             raise APIError(response)
         return data
